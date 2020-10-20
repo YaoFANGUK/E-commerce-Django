@@ -51,7 +51,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -61,9 +61,11 @@ MIDDLEWARE = [
 # CORS跨域请求白名单设置
 CORS_ORIGIN_WHITELIST = (
     'http://127.0.0.1:8080',
+    'http://0.0.0.0:8080',
     'https://127.0.0.1:8080',
     'http://localhost:8080',
     'https://localhost:8080',
+    'http://www.meiduo.site:8080',
 )
 CORS_ALLOW_CREDENTIALS = True  # 允许携带cookie
 
