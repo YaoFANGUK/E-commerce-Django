@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
-    'users'
+    'users',
+    'verifications'
 ]
 
 MIDDLEWARE = [
@@ -105,6 +106,7 @@ DATABASES = {
 }
 
 # Redis
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 CACHES = {
     # 默认存储信息: 存到 0 号库
     "default": {
@@ -122,8 +124,14 @@ CACHES = {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
     },
+    "verify_code": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/2",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
 }
-SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "session"
 
 

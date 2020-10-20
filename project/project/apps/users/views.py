@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.views import View
 from django.http import JsonResponse
 from django.contrib.auth import login
+from django_redis import get_redis_connection
 import json,re
 from .models import User
 
@@ -94,7 +95,13 @@ class RegisterView(View):
                 'errmsg': 'allow格式有误',
             }, status=400)
         # 2.3 业务性校验 - 验证码
-        # TODO: 此处填充短线验证码校验逻辑代码
+        conn = get_redis_connection('verify_code')
+        sms_code_from_redis = conn.get('sms_%s'%mobile)
+        if sms_code != sms_code_from_redis.decode():
+            return JsonResponse({
+                'code': 400,
+                'errmsg': '短信验证码有误'
+            },status=400)
 
         # 3. 业务数据处理 - 新建User模型类对象保存数据库
         try:
