@@ -49,6 +49,15 @@ class SMSCodeView(View):
             },status=400)
         # 3.创建连接到redis的对象
         redis_conn = get_redis_connection('verify_code')
+        # 从redis数据库获取存入的数据
+        send_flag = redis_conn.get('send_flag_%s' % mobile)
+        # 判断该数据是否存在，如果存在意味着用户发送短信间隔不超过60s，直接返回
+        if send_flag:
+            return JsonResponse({
+                'code': 400,
+                'errmsg': '发送短信过于频繁'
+            },status=400)
+
         # 4. 提取图形验证码
         image_code_server = redis_conn.get('img_%s'%uuid)
         if image_code_server is None:
@@ -81,6 +90,8 @@ class SMSCodeView(View):
         # 8. 保存短信验证码
         # 短信验证码有效期，单位：300秒
         redis_conn.setex('sms_%s' % mobile, 300, sms_code)
+        # 往redis中存入一个数据有效期为60s避免用户频繁发送短信
+        redis_conn.setex('send_flag_%s' % mobile, 60, 1)
 
         # 9. 发送短信验证码
         # 短信模版

@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.views import View
 from django.http import JsonResponse
 from users.models import User
+from  django_redis import get_redis_connection
 import json,re
 
 class UsernameCountView(View):
@@ -95,6 +96,24 @@ class RegisterView(View):
             }, status=400)
 
         # 3.3 业务性校验
+        # 保存注册数据之前，对比短信验证码
+        # 判断短信验证码是否正确：与图形验证码一样的业务逻辑
+        #   提取服务端存储的短信验证码
+        redis_conn = get_redis_connection('verify_code')
+        sms_code_server = redis_conn.get('sms_%s' % mobile)
+        # 判断短信验证码是否过期
+        if not sms_code_server:
+            return JsonResponse({
+                'code': 400,
+                'errmsg': '短信验证码失效'
+            },status=400)
+        # 对比用户输入的和服务器存储的短信验证码是否一致
+        if sms_code != sms_code_server.decode():
+            return JsonResponse({
+                'code': 400,
+                'errmsg': '短信验证码有误'
+            },status=400)
+
         try:
             user = User.objects.create_user(
                 username=username,
