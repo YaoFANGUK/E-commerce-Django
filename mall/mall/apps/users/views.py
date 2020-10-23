@@ -108,6 +108,7 @@ class RegisterView(View):
             }, status=500)
 
         # 状态保持 —— 使用session机制，把用户数据写入redis
+        login(request, user)
 
         # 4. 构建响应
         return JsonResponse({
