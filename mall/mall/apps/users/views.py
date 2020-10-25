@@ -170,7 +170,7 @@ class LoginView(View):
             request.session.set_exipry(0)
         else:
             # 6.如果记住：session有效期设置为两周
-            request.session.set_exipry(None)
+            request.session.set_expiry(None)
 
         # 8. 返回json
         return JsonResponse({
