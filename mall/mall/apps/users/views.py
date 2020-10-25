@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from users.models import User
 from  django_redis import get_redis_connection
 import json,re
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate,login
 
 class UsernameCountView(View):
     """判断用户名是否重复注册"""
