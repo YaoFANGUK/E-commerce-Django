@@ -213,7 +213,7 @@ QQ_REDIRECT_URI = 'http://www.meiduo.site:8080/oauth_callback.html'
 
 
 # 配置邮件服务器
-EMAIL_BACKEND = 'django.core.mail.backends,smtp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 # 使用网易smtp服务器
 EMAIL_HOST = 'smtp.163.com'
 # 端口号
