@@ -31,6 +31,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+LOGIN_URL = '/login/'
+
 # 使用自定义用户模块
 AUTH_USER_MODEL = 'users.User'
 

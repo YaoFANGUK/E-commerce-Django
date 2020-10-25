@@ -1,6 +1,8 @@
 from django.contrib.auth.backends import ModelBackend
 import re
 from .models import User
+from mall.utils.secret import SecretOauth
+from django.conf import settings
 
 def get_user_by_account(account):
     """判断account是否为手机号， 返回user对象"""
@@ -39,3 +41,20 @@ class UsernameMobileAuthBackend(ModelBackend):
         if user and user.check_password(password):
             # 如果user存在，密码正确，则返回user
             return user
+
+# 获取验证邮件完整的verify_url
+def generate_verify_email_url(request):
+    """
+    :param request: 请求对象 —— 通过请求对象获取登录的用户request.user
+    :return: 完整的verify_url
+    """
+    # 1.获取当前登录的用户
+    user = request.user
+    # 2.把用户数据加密成token值
+    data_dict = {
+        'user_id': user.id,
+        'email': user.email
+    }
+    auth = SecretOauth()
+    token = auth.dump(data_dict)
+    verify_url =  settings.EMAIL_VERIFY_URL + token

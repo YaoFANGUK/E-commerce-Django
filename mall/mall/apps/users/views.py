@@ -4,7 +4,11 @@ from django.http import JsonResponse
 from users.models import User
 from  django_redis import get_redis_connection
 import json,re
-from django.contrib.auth import authenticate,login
+from django.contrib.auth import authenticate,login,logout
+from django.db import DatabaseError
+from django.conf import settings
+from django.contrib.auth.mixins import LoginRequiredMixin
+from mall.utils.views import LoginRequiredJSONMixin
 
 class UsernameCountView(View):
     """判断用户名是否重复注册"""
@@ -23,6 +27,7 @@ class UsernameCountView(View):
             'errmsg': 'ok',
             'count': count
         })
+
 
 class MobileCountView(View):
     """判断手机号是否重复注册"""
@@ -131,10 +136,16 @@ class RegisterView(View):
         login(request, user)
 
         # 4. 构建响应
-        return JsonResponse({
+        # 生成响应对象
+        response = JsonResponse({
             'code': 0,
             'errmsg': '注册成功'
         })
+        # 在响应对象中谁用户名信息
+        # 将用户名写入到cookie，有效期14天
+        response.set_cookie('username', user.username, max_age=3600*24*14)
+        return response
+
 
 class LoginView(View):
     """用户登录后端逻辑"""
@@ -172,8 +183,109 @@ class LoginView(View):
             # 6.如果记住：session有效期设置为两周
             request.session.set_expiry(None)
 
-        # 8. 返回json
-        return JsonResponse({
+        # 8. 返回json response
+        # 生成响应对象
+        response = JsonResponse({
             'code':0,
             'errmsg': 'ok'
         })
+        # 在响应对象中谁用户名信息
+        # 将用户名写入到cookie，有效期14天
+        response.set_cookie('username', user.username, max_age=3600*24*14)
+        return response
+
+
+class LogoutView(View):
+    """
+    实现退出登录的接口
+    """
+    def delete(self, request):
+        """
+        实现退出登录逻辑
+        """
+        # 清理session
+        logout(request)
+        # 创建response对象
+        response = JsonResponse({
+            'code': 0,
+            'errmsg': 'ok'
+        })
+        # 调用对象的delete_cookie方法，清楚cookie
+        response.delete_cookie('username')
+        # 返回响应
+        return response
+
+
+class UserInfoView(LoginRequiredJSONMixin, View):
+    """用户中心"""
+    def get(self, request):
+        """提供个人信息页面"""
+        return JsonResponse({
+            'code': 0,
+            'errmsg': '个人中心',
+            'info_data': {
+                "username": "zs",
+                "mobile": "1318888888",
+                "email": "",
+                "email_active": "true"
+            }
+        })
+
+
+class EmailView(View):
+
+    def put(self, request):
+        # 1.提取参数
+        data = json.loads(request.body.decode())
+        email = data.get('email')
+        # 2.校验参数
+        if not email:
+            return JsonResponse({
+                'code': 400,
+                'errmsg': '缺少参数'
+            })
+        if not re.match(r'^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$', email):
+            return JsonResponse({
+                'code': 400,
+                'errmsg': '邮箱格式有误'
+            })
+        # 3.业务处理 —— 修改email属性和发送验证邮件
+        try:
+            user = request.user
+            user.email = email
+            user.save()
+        except DatabaseError:
+            return JsonResponse({
+                'code':500,
+                'errmsg': '数据库添加邮箱失败'
+            },status=500)
+        # TODO: 发送验证邮件
+
+        # 4.构建响应
+        return JsonResponse({
+            'code': 0,
+            'errmsg': 'ok'
+        })
+
+# 定义一个函数发送邮件
+def send_verify_email(to_email, verify_url):
+    """
+    :param to_email: 目标邮箱地址
+    :param verify_url: 嵌入邮件正文的验证连接 - 用户点击发送请求调用后续接口完成邮箱验证
+    :return:
+    """
+    # 标题
+    subject = "商城邮箱验证"
+    # 发送内容
+    html_message = '<p>尊敬的用户您好！</p>' \
+                    '<p>感谢您使用商城。</p>' \
+                    '<p>您的邮箱为: %s. 请点击此链接激活您的邮箱: </p>' \
+                    '<p><a href="%s">%s</a></p>' %(to_email,verify_url,verify_url)
+    # 发送邮件
+    result = send_mail(
+        subject = subject,
+        message = "",
+        from_email = settings.EMAIL_FROM,
+        recipient_list = [to_email],
+        html_message = html_message,
+    )
