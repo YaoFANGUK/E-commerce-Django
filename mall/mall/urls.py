@@ -24,5 +24,6 @@ register_converter(converters.MobileConverter, 'mobile')
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('users.urls')),
-    path('', include('verifications.urls'))
+    path('', include('verifications.urls')),
+    path('', include('oauth.urls')),
 ]
