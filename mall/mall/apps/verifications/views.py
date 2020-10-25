@@ -6,6 +6,7 @@ from verifications.libs.captcha.captcha import captcha
 from verifications.libs.yuntongxun.ccp_sms import CCP
 from celery_tasks.sms.tasks import ccp_send_sms_code # 使用celery异步发送短信
 from mall.utils.secret import SecretOauth
+from users.models import User
 import logging, random
 logger = logging.getLogger('django')
 
