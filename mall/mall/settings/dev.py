@@ -224,6 +224,8 @@ EMAIL_HOST_USER = 'mymall_admin@163.com'
 EMAIL_HOST_PASSWORD = 'IYTKRTBAQJMFRSPT'
 # 收件人看到的发件人信息
 EMAIL_FROM = 'my商城<mymall_admin@163.com>'
+# 邮箱验证链接
+EMAIL_VERIFY_URL = 'http://www.linfaner.top:8080/success_verify_email.html?token='
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/

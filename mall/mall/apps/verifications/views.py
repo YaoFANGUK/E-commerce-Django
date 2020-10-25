@@ -105,3 +105,38 @@ class SMSCodeView(View):
             'code': 0,
             'errmsg': '发送短信成功'
         })
+
+
+class VerifyEmailView(View):
+    def put(self, request):
+        # 1.接收token
+        token = request.GET.get('token')
+        if not token:
+            return JsonResponse({
+                'code': 400,
+                'errmsg': '缺少token'
+            })
+        # 2.解密
+        data_dict = SecretOauth().loads(token)
+        # 3. 去数据库对比 user_id, email
+        try:
+            user = User.objects.get(pk=data_dict.get('user_id'), email=data_dict.get('email'))
+        except Exception as e:
+            print(e)
+            return JsonResponse({
+                'code': 400,
+                'errmsg': '参数有误'
+            })
+        # 5.修改激活状态
+        try:
+            user.email_active = True
+            user.save()
+        except DatabaseError:
+            return JsonResponse({
+                'code': 0,
+                'errmsg': '激活失败'
+            })
+        return JsonResponse({
+            'code': 0,
+            'errmsg': '激活成功'
+        })
