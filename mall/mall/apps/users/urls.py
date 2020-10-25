@@ -8,4 +8,6 @@ urlpatterns = [
     path('mobiles/<mobile:mobile>/count/', views.MobileCountView.as_view()),
     # 用户注册
     path('register/', views.RegisterView.as_view()),
+    # 用户登录
+    path('login/', views.LoginView.as_view()),
 ]

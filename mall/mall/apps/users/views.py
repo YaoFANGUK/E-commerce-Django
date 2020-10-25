@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from users.models import User
 from  django_redis import get_redis_connection
 import json,re
+from django.contrib.auth import authenticate
 
 class UsernameCountView(View):
     """判断用户名是否重复注册"""
@@ -133,4 +134,46 @@ class RegisterView(View):
         return JsonResponse({
             'code': 0,
             'errmsg': '注册成功'
+        })
+
+class LoginView(View):
+    """用户登录后端逻辑"""
+    def post(self, request):
+        """实现登陆接口"""
+        # 1. 接收参数
+        data_dict = json.loads(request.body.decode())
+        username = data_dict.get('username')
+        password = data_dict.get('password')
+        remembered = data_dict.get('remembered')
+        # 2. 参数校验
+        if not all([username, password]):
+            return JsonResponse({
+                'code': 400,
+                'errmsg': '缺少必要的参数'
+            },status=400)
+        # 3.验证是否能够登陆
+        user = authenticate(request, username = username, password = password)
+
+        #判断是否为空，如果为空，返回
+        if user is None:
+            return JsonResponse({
+                'code': 400,
+                'errmsg': '用户名或密码错误'
+            },status=400)
+
+        # 4. 状态保持
+        login(request, user)
+
+        # 5. 判断是否记住用户
+        if remembered != True:
+            # 7. 如果没有记住，session立即失效
+            request.session.set_exipry(0)
+        else:
+            # 6.如果记住：session有效期设置为两周
+            request.session.set_exipry(None)
+
+        # 8. 返回json
+        return JsonResponse({
+            'code':0,
+            'errmsg': 'ok'
         })

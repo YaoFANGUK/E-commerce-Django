@@ -20,12 +20,22 @@ http://www.linfaner.top:8000/register/
 ```
 http://www.linfaner.top:8000/image_codes/550e8400-e29b-41d4-a716-446655440000/
 ```
+> [POST] 用户登陆
+```
+http://www.linfaner.top:8000/login/
+```
+> [GET] 短信验证码
+```
+http://www.linfaner.top:8000/sms_codes/13188888888/
+```
+
 
 ### 1. 工程目录
 - `statics`:前端静态文件
 - `mall`: 项目目录
     - `mall`: 项目
         - `apps`: 专门管理子应用的包
+            - `oauth`: 第三方登录
             - `users`: 用户登陆应用
             - `verifications`: 验证子应用
                 - `libs`: 工具类
