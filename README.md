@@ -4,6 +4,8 @@
 - 后端动态(接口)服务器: http://www.linfaner.top:8000/ (django)
 
 **接口测试：**
+
+**测试账号：** alyyf1 qwer1234
 > [GET] 查找用户是否注册：
 ```
 http://www.linfaner.top:8000/usernames/fangyao/count/
