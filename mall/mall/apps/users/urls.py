@@ -14,6 +14,6 @@ urlpatterns = [
     path('logout/', views.LogoutView.as_view()),
     # 用户中心
     path('info/', views.UserInfoView.as_view()),
-    # 邮箱
+    # 添加邮箱
     path('emails/', views.EmailView.as_view()),
 ]

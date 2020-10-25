@@ -4,6 +4,7 @@ from django_redis import get_redis_connection
 from django.http import HttpResponse,JsonResponse
 from verifications.libs.captcha.captcha import captcha
 from verifications.libs.yuntongxun.ccp_sms import CCP
+from celery_tasks.sms.tasks import ccp_send_sms_code # 使用celery异步发送短信
 import logging, random
 logger = logging.getLogger('django')
 
@@ -95,7 +96,8 @@ class SMSCodeView(View):
 
         # 9. 发送短信验证码
         # 短信模版
-        CCP().send_template_sms(mobile,[sms_code, 5], 1)
+        # CCP().send_template_sms(mobile,[sms_code, 5], 1)
+        ccp_send_sms_code.delay(mobile, sms_code)
         print('短信验证码: ', sms_code)
 
         # 10. 响应结果
@@ -103,4 +105,3 @@ class SMSCodeView(View):
             'code': 0,
             'errmsg': '发送短信成功'
         })
-

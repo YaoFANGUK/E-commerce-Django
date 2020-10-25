@@ -212,6 +212,19 @@ QQ_CLIENT_SECRET = 'c6ce949e04e12ecc909ae6a8b09b637c'
 QQ_REDIRECT_URI = 'http://www.meiduo.site:8080/oauth_callback.html'
 
 
+# 配置邮件服务器
+EMAIL_BACKEND = 'django.core.mail.backends,smtp.EmailBackend'
+# 使用网易smtp服务器
+EMAIL_HOST = 'smtp.163.com'
+# 端口号
+EMAIL_PORT = 25
+# 发送邮件的邮箱
+EMAIL_HOST_USER = 'mymall_admin@163.com'
+# 在邮箱中设置的客户端授权码
+EMAIL_HOST_PASSWORD = 'IYTKRTBAQJMFRSPT'
+# 收件人看到的发件人信息
+EMAIL_FROM = 'my商城<mymall_admin@163.com>'
+
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 

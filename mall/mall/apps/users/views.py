@@ -220,21 +220,27 @@ class UserInfoView(LoginRequiredJSONMixin, View):
     """用户中心"""
     def get(self, request):
         """提供个人信息页面"""
+        info_data =  {
+            "username": request.user.username,
+            "mobile": request.user.mobile,
+            "email": request.user.email,
+            "email_active": request.user.email_active
+        }
         return JsonResponse({
             'code': 0,
-            'errmsg': '个人中心',
-            'info_data': {
-                "username": "zs",
-                "mobile": "1318888888",
-                "email": "",
-                "email_active": "true"
-            }
+            'errmsg': 'ok',
+            'info_data': info_data
         })
 
 
 class EmailView(View):
-
+    """
+    添加邮箱
+    """
     def put(self, request):
+        """
+        实现添加邮箱逻辑
+        """
         # 1.提取参数
         data = json.loads(request.body.decode())
         email = data.get('email')
