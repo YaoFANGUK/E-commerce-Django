@@ -13,7 +13,7 @@ from django.contrib.auth import login
 
 
 
-# 1.接口1： 获取QQ扫描URL
+# 1.接口1： 获取QQ扫码URL
 class QQURLView(View):
     def get(self, request):
         # next 表示从哪个页面进入到的登录页面

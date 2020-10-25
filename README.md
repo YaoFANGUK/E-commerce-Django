@@ -3,9 +3,7 @@
 - 前端静态服务器：http://www.linfaner.top:8080/ (python http.server)
 - 后端动态(接口)服务器: http://www.linfaner.top:8000/ (django)
 
-**接口测试：**
-
-**测试账号：** alyyf1 qwer1234
+**接口测试：** （测试账号：alyyf1 qwer1234）
 > [GET] 查找用户是否注册：
 ```
 http://www.linfaner.top:8000/usernames/fangyao/count/
@@ -30,7 +28,18 @@ http://www.linfaner.top:8000/login/
 ```
 http://www.linfaner.top:8000/sms_codes/13188888888/
 ```
-
+> [PUT] 邮箱验证
+```
+http://www.linfaner.top:8000/emails/verification/
+```
+> [GET] QQ登陆 （获取QQ扫码URL）
+```
+http://www.linfaner.top:8000/qq/authorization/
+```
+> [GET/POST] QQ登陆回调 (GET获取openid，POST绑定QQ)
+```
+http://www.linfaner.top:8000/oauth_callback/
+```
 
 ### 1. 工程目录
 - `statics`:前端静态文件
@@ -50,4 +59,11 @@ http://www.linfaner.top:8000/sms_codes/13188888888/
         - `templates`: 存放模板
         -  `utils`: 工具目录
  
+ #### 2. 效果预览
+ - 邮箱验证
+
+ <img src="https://s1.ax1x.com/2020/10/25/Bm2YtK.png" width="500">
  
+ - 短信验证
+ 
+ <img src="https://s1.ax1x.com/2020/10/25/Bm2tfO.jpg" width="250" >
