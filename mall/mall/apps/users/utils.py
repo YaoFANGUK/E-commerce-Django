@@ -57,7 +57,7 @@ def generate_verify_email_url(request):
     }
     # 将参数加密
     auth = SecretOauth()
-    token = auth.dump(data_dict)
+    token = auth.dumps(data_dict)
     # 拼接完整的激活路由
     verify_url =  settings.EMAIL_VERIFY_URL + token
     return verify_url
