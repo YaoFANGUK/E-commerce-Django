@@ -167,7 +167,7 @@ class LoginView(View):
         # 5. 判断是否记住用户
         if remembered != True:
             # 7. 如果没有记住，session立即失效
-            request.session.set_exipry(0)
+            request.session.set_expiry(0)
         else:
             # 6.如果记住：session有效期设置为两周
             request.session.set_expiry(None)
