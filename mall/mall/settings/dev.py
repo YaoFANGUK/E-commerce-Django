@@ -68,6 +68,8 @@ CRONJOBS = [
      'content.crons.generate_static_index_html',
      '>> ' + os.path.join(BASE_DIR, 'logs/crontab.log'))
 ]
+# CRONTAB_COMMAND_PREFIX = "LANG_ALL=zh_cn.UTF-8"
+# CRONTAB_COMMAND_PREFIX = "LANG=zh_CN.utf8"
 
 MIDDLEWARE = [
     # 添加 django-cors-headers 使其可以进行 cors 跨域
