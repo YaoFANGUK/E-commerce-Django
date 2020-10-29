@@ -230,6 +230,15 @@ EMAIL_FROM = 'my商城<mymall_admin@163.com>'
 # 邮箱验证链接
 EMAIL_VERIFY_URL = 'http://www.linfaner.top:8080/success_verify_email.html?token='
 
+
+# 指定自定义的Django文件存储类
+DEFAULT_FILE_STORAGE = 'mall.utils.fastdfs.FastDFSStorage'
+# FastDFS相关参数
+FDFS_BASE_URL = 'http://image.linfaner.top/'
+
+
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
