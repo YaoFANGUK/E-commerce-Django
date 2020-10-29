@@ -50,12 +50,23 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'users',
     # 添加 django-cors-headers使其可以进行cors跨域
-    'corsheaders',
+    'corsheaders',  # 安装cors应用，解决跨域问题
     'verifications',
     'oauth',
     'content',
     'goods',
     'areas',
+    'django_crontab',  # 实现定时任务
+]
+
+# 设置定时静态化页面任务
+CRONJOBS = [
+    # 每一分钟生成一次首页静态文件
+    # *  *  *  *  *
+    # 分 时 日 月 周
+    ('*/1 * * * *',
+     'content.crons.generate_static_index_html',
+     '>> ' + os.path.join(BASE_DIR, 'logs/crontab.log'))
 ]
 
 MIDDLEWARE = [

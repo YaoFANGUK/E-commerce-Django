@@ -79,3 +79,6 @@ http://www.linfaner.top:8000/oauth_callback/
  
  [FastDFS搭建](https://support.huaweicloud.com/prtg-kunpengat/fastdfs_01_0001.html)
  
+ [已有nginx添加模块](https://blog.seosiwei.com/detail/28)
+ 
+ 

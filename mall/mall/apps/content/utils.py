@@ -12,7 +12,6 @@ def get_categories():
     :return 菜单字典
     """
     # 查询商品频道和分类
-    # 查询商品频道和分类
     categories = OrderedDict()
     channels = GoodsChannel.objects.order_by('group_id', 'sequence')
     for channel in channels:
