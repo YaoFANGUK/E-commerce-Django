@@ -85,4 +85,4 @@ http://127.0.0.1:8000/list/115/skus/?page=1&page_size=5&ordering=-create_time
  
  [已有nginx添加模块](https://blog.seosiwei.com/detail/28)
  
- 
+ [Docker安装 Elasticsearch](https://www.elastic.co/guide/en/elasticsearch/reference/7.5/docker.html#docker-cli-run-dev-mode)

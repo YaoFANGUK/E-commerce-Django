@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'goods',
     'areas',
     'django_crontab',  # 实现定时任务
+    'haystack'  # 全文检索
 ]
 
 # 设置定时静态化页面任务
@@ -249,7 +250,17 @@ DEFAULT_FILE_STORAGE = 'mall.utils.fastdfs.FastDFSStorage'
 # FastDFS相关参数
 FDFS_BASE_URL = 'http://image.linfaner.top/'
 
+# Haystack 配置
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+        'URL': 'http://search.linfaner.top:9200/',  # Elasticsearch服务器ip地址，端口号固定为9200
+        'INDEX_NAME': 'mall', # Elasticsearch建立索引库的名称
+    },
+}
 
+# 当添加、修改、删除数据时，自动生成索引
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
 
 
 # Internationalization

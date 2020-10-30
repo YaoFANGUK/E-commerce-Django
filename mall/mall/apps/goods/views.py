@@ -6,6 +6,7 @@ from .utils import get_breadcrumb, get_goods_and_spec
 from content.utils import get_categories
 from .models import SKU
 from django.db import DatabaseError
+from haystack.views import SearchView
 
 
 class ListView(View):
@@ -111,3 +112,30 @@ class HotGoodsView(View):
             'hot_skus': hot_skus
         })
 
+
+class MySearchView(SearchView):
+    """
+    重写SearchView类, 搜索SKU商品
+    该视图中默认已经提供了一个get方法响应GET请求，并且已经实现了根据参数检索数据
+    """
+    def create_response(self):
+        # 1.获取ES搜索的结果
+        context = self.get_context()
+        # object_list是一个列表，保存了Haystack查询的结果Result对象
+        results = context['page'].object_list
+        data_list = []
+        for result in results:
+            sku = result.object
+            data_list.append({
+                'id': sku.id,
+                'name': sku.name,
+                'price': sku.price,
+                'default_image_url': sku.default_image.url,
+                # 用户搜索的关键词
+                'searchkey': context.get('query'),
+                # 页面总数
+                'page_size': context['page'].paginator.num_pages,
+                # 查询的总数量
+                'count': context['page'].paginator.count
+            })
+        return JsonResponse(data_list, safe=False)
