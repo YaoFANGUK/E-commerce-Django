@@ -23,6 +23,7 @@ def get_breadcrumb(category_id):
         ret_dict['cat2'] = category.parent.parent.name
     return  ret_dict
 
+
 def get_goods_and_spec(sku_id):
     # 当前SKU商品
     sku = SKU.objects.get(pk=sku_id)

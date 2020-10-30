@@ -78,6 +78,7 @@ class ListView(View):
             'count': total_page
         })
 
+
 class HotGoodsView(View):
     """
     商品热销排行
@@ -139,3 +140,5 @@ class MySearchView(SearchView):
                 'count': context['page'].paginator.count
             })
         return JsonResponse(data_list, safe=False)
+
+

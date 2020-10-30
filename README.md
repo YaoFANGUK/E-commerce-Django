@@ -68,6 +68,10 @@ http://www.linfaner.top:8000/oauth_callback/
 ```
 http://127.0.0.1:8000/list/115/skus/?page=1&page_size=5&ordering=-create_time
 ```
+> [GET] 商品搜索 (search服务器)
+```
+http://www.linfaner.top:8080/search.html?q=华为
+```
 
  #### 3. 效果预览
  - 邮箱验证
