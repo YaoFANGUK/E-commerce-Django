@@ -5,6 +5,7 @@ from goods.models import GoodsCategory
 from .utils import get_breadcrumb, get_goods_and_spec
 from content.utils import get_categories
 from .models import SKU
+from django.db import DatabaseError
 
 
 class ListView(View):
@@ -74,5 +75,39 @@ class ListView(View):
             'breadcrumb': breadcrumb,
             'list': data_list,
             'count': total_page
+        })
+
+class HotGoodsView(View):
+    """
+    商品热销排行
+    根据路径参数 category_id 查询出该类商品销量前二的商品
+    """
+    def get(self, request, category_id):
+        """
+        提供商品热销排行 JSON 数据
+        """
+        # 根据销量排序
+        try:
+            skus = SKU.objects.filter(category_id=category_id, is_launched=True).order_by('-sales')[:2]  # 销量前二
+        except DatabaseError:
+            return JsonResponse({
+                'code': 400,
+                'errmsg': '获取商品出错'
+            })
+
+        # 转换格式
+        hot_skus = []
+        for sku in skus:
+            hot_skus.append({
+                'id': sku.id,
+                'default_image_url': sku.default_image.url,
+                'name': sku.name,
+                'price': sku.price
+            })
+
+        return JsonResponse({
+            'code': 0,
+            'errmsg': 'OK',
+            'hot_skus': hot_skus
         })
 

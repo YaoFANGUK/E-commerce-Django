@@ -64,6 +64,10 @@ http://www.linfaner.top:8000/qq/authorization/
 ```
 http://www.linfaner.top:8000/oauth_callback/
 ```
+> [GET] 商品列表页
+```
+http://127.0.0.1:8000/list/115/skus/?page=1&page_size=5&ordering=-create_time
+```
 
  #### 3. 效果预览
  - 邮箱验证
