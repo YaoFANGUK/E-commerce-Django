@@ -64,6 +64,7 @@ class SubAreasView(View):
         3. 响应市或区数据
         """
         # ========(1)、通读策略之"读缓存，命中直接构建响应返回"=========
+        pk = str(pk)
         sub_data = cache.get('sub_area_' + pk)
         if sub_data:
             return JsonResponse({
