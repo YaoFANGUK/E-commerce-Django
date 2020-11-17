@@ -377,8 +377,8 @@ class CreateAddressView(LoginRequiredJSONMixin, View):
         json_dict = json.loads(request.body.decode())
         receiver = json_dict.get('receiver')
         province_id = json_dict.get('province_id')
-        city_id = json_dict.get('city_id'),
-        district_id = json_dict.get('district_id'),
+        city_id = json_dict.get('city_id')
+        district_id = json_dict.get('district_id')
         place = json_dict.get('place')
         mobile = json_dict.get('mobile')
         tel = json_dict.get('tel')
@@ -479,7 +479,11 @@ class AddressView(View):
                 'tel': address.tel,
                 'email': address.email
             }
-            address_dict_list.append(address_dict)
+            if address.id == request.user.default_address_id:
+                # 当前地址是用户默认地址，需要把这个地址插入列表头
+                address_dict_list.insert(0, address_dict)
+            else:
+                address_dict_list.append(address_dict)
         # 获取默认地址id
         default_id = request.user.default_address_id
 

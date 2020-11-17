@@ -23,9 +23,9 @@ urlpatterns = [
     # 展示收获地址
     path('addresses/', views.AddressView.as_view()),
     # 修改和删除收货地址
-    path('addresses/(?P<address_id>\d+)/', views.UpdateAddressView.as_view()),
+    path('addresses/<int:address_id>/', views.UpdateDestroyAddressView.as_view()),
     # 设置默认地址
-    path('addresses/(?P<address_id>\d+)/default/', views.DefaultAddressView.as_view()),
+    path('addresses/<int:address_id>/default/', views.DefaultAddressView.as_view()),
     # 修改地址标题
-    path('addresses/(?P<address_id>\d+)/title/', views.UpdateTitleAddressView.as_view()),
+    path('addresses/<int:address_id>/title/', views.UpdateTitleAddressView.as_view()),
 ]
