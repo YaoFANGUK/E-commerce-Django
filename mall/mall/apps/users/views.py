@@ -13,6 +13,7 @@ from celery_tasks.email.tasks import send_verify_email
 from users.utils import generate_verify_email_url
 from mall.utils.secret import SecretOauth
 
+
 class UsernameCountView(View):
     """判断用户名是否重复注册"""
     def get(self, request, username):
@@ -47,6 +48,7 @@ class MobileCountView(View):
             'errmsg': 'ok',
             'count': count
         })
+
 
 class RegisterView(View):
     """用户注册业务逻辑"""
@@ -278,3 +280,69 @@ class EmailView(View):
             'code': 0,
             'errmsg': '添加邮箱成功'
         })
+
+
+class UserBrowseHistory(LoginRequiredMixin, View):
+    # 用户浏览历史记录
+    def post(self, request):
+        # 1. 提取参数
+        user = request.user
+        data = json.loads(request.body.decode())
+        sku_id = data.get('sku_id')
+        # 2. 校验参数
+        try:
+            sku = SKU.objects.get(pk=sku_id, is_launched=True)
+        except DatabaseError:
+            # 如果sku商品不存在或已经下架，则不记录历史
+            return JsonResponse({
+                'code': 0,
+                'errmsg': 'ok',
+            })
+        # 3. 业务数据处理 - 历史记录写入redis
+        # history_1 : [1,2,3,4,5]
+        conn = get_redis_connection('history')  # 3号库
+        p = conn.pipeline()
+        # (1).去重
+        p.lrem('history_%s' % user.id, 0, sku_id)
+        # (2).左侧插入
+        p.lpush('history_%s' % user.id, sku_id)
+        # (3).截断
+        p.ltrim('history_%s' % user.id, 0, 4)
+        p.execute()
+        # (4).构建响应
+        return JsonResponse({
+            'code': 0,
+            'errmsg': 'ok',
+        })
+
+    # 查询历史记录
+    def get(self, request):
+        # 1.提取参数
+        user = request.user
+        # 2.校验参数
+        # 3.业务处理 —— 从redis读历史记录，再从mysql读详细信息
+        # 3.1 读取redis历史(访问sku_id)
+        conn = get_redis_connection('history')   # 3号库
+        sku_ids = conn.lrange('history_%s' % user.id, 0, -1)
+        # 3.2读取mysql商品详细信息
+        # django模型类根据主键过滤的时候，主键可以直接传递整数、字符或者字节
+        skus = SKU.objects.filter(
+            # 过滤出id包含在sku_ids列表中的所有对象
+            # id 在 [b'1', b'2', b'3']
+            id__inn=sku_ids
+        )
+        sku_list = []
+        for sku in skus:
+            sku_list.append({
+                'id': sku.id,
+                'name': sku.name,
+                'default_image_url': sku.default_image_url,
+                'price': sku.price
+            })
+        # 构建响应
+        return JsonResponse({
+            'code': 0,
+            'errmsg': 'ok',
+            'skus': sku_list
+        })
+

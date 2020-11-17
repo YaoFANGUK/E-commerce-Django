@@ -16,4 +16,7 @@ urlpatterns = [
     path('info/', views.UserInfoView.as_view()),
     # 添加邮箱
     path('emails/', views.EmailView.as_view()),
+    # 用户浏览历史
+    path('browse_histories/', views.UserBrowseHistory.as_view()),
+    
 ]
