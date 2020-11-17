@@ -18,9 +18,9 @@ class ListView(View):
         提供商品列表页
         """
         # 1. 获取参数
-        page_num = request.GET.get('page')
+        page = request.GET.get('page')
         page_size = request.GET.get('page_size')
-        sort = request.GET.get('ordering')
+        ordering = request.GET.get('ordering')
         # 2.校验参数
         # 判断category_id是否正确
         try:
@@ -35,24 +35,27 @@ class ListView(View):
         # 查询面包屑导航
         breadcrumb = get_breadcrumb(category_id=category_id)
 
-        # 排序方式
+        # 3.业务数据处理 —— 根据分类过滤sku商品，排序分页返回
+        # 3.1 过滤加排序
         try:
-            skus = SKU.objects.filter(category=category, is_launched=True).order_by(sort)
+            skus = SKU.objects.filter(category_id=category_id, is_launched=True).order_by(ordering)
         except SKU.DoesNotExist:
             return JsonResponse({
                 'code': 400,
                 'errmsg': '获取数据库数据出错'
             })
-
-        paginator = Paginator(skus, 5)
-        # 获取每页商品数据
+        # 3.2 分页
+        # (1)获取分页器对象
+        paginator = Paginator(skus, page_size)
+        # page_skus 也是一个查询集，是分页之后取得的当前页数据查询集
         try:
-            page_skus = paginator.page(page_num)
+            # (2) 获取每页商品数据, 找对象的方法获取所需的页数据
+            page_skus = paginator.page(page)
         except EmptyPage:
             # 如果page_num不正确，默认返回400
             return JsonResponse({
                 'code': 400,
-                'errmsg': 'page数据出错'
+                'errmsg': '页面不存在'
             })
 
         # 获取列表页总页数

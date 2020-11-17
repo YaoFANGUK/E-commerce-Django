@@ -56,8 +56,9 @@ INSTALLED_APPS = [
     'content',
     'goods',
     'areas',
+    'carts',
     'django_crontab',  # 实现定时任务
-    'haystack'  # 全文检索
+    'haystack',  # 全文检索
 ]
 
 # 设置定时静态化页面任务
@@ -150,6 +151,14 @@ CACHES = {
     "history": {
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": "redis://127.0.0.1:6379/3",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+    # shopping trolley数据： 存到 5 号库
+    "carts": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/5",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
