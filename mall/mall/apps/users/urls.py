@@ -28,4 +28,6 @@ urlpatterns = [
     path('addresses/<int:address_id>/default/', views.DefaultAddressView.as_view()),
     # 修改地址标题
     path('addresses/<int:address_id>/title/', views.UpdateTitleAddressView.as_view()),
+    # 修改密码
+    path('password/', views.ChangePasswordView.as_view()),
 ]
