@@ -28,7 +28,7 @@ class CartsView(View):
             conn = get_redis_connection('carts')  # 5号库
             # (1) 提取原有redis购物车数据
             # redis_carts = {b'1': b'5', b'2', b'10'}
-            redis_carts = conn.hexdigest('carts_%s' % user.id)
+            redis_carts = conn.hgetall('carts_%s' % user.id)
             # redis_selected = [b'1', b'2']
             redis_selected = conn.smembers('selected_%s' % user.id)
             # (2)构建最新的购物车数据 —— 存在则count累加， 选中状态以最新为准
