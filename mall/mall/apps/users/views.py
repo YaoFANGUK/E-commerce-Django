@@ -12,7 +12,7 @@ from mall.utils.views import LoginRequiredJSONMixin
 from celery_tasks.email.tasks import send_verify_email
 from users.utils import generate_verify_email_url
 from mall.utils.secret import SecretOauth
-
+from goods.models import SKU
 
 class UsernameCountView(View):
     """判断用户名是否重复注册"""
@@ -329,14 +329,14 @@ class UserBrowseHistory(LoginRequiredMixin, View):
         skus = SKU.objects.filter(
             # 过滤出id包含在sku_ids列表中的所有对象
             # id 在 [b'1', b'2', b'3']
-            id__inn=sku_ids
+            id__in=sku_ids
         )
         sku_list = []
         for sku in skus:
             sku_list.append({
                 'id': sku.id,
                 'name': sku.name,
-                'default_image_url': sku.default_image_url,
+                'default_image_url': sku.default_image.url,
                 'price': sku.price
             })
         # 构建响应
