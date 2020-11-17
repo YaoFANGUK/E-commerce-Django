@@ -18,5 +18,14 @@ urlpatterns = [
     path('emails/', views.EmailView.as_view()),
     # 用户浏览历史
     path('browse_histories/', views.UserBrowseHistory.as_view()),
-    
+    # 新增收货地址
+    path('addresses/create/', views.CreateAddressView.as_view()),
+    # 展示收获地址
+    path('addresses/', views.AddressView.as_view()),
+    # 修改和删除收货地址
+    path('addresses/(?P<address_id>\d+)/', views.UpdateAddressView.as_view()),
+    # 设置默认地址
+    path('addresses/(?P<address_id>\d+)/default/', views.DefaultAddressView.as_view()),
+    # 修改地址标题
+    path('addresses/(?P<address_id>\d+)/title/', views.UpdateTitleAddressView.as_view()),
 ]
