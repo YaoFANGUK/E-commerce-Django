@@ -1,12 +1,13 @@
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from django.conf import settings
 
+
 class SecretOauth():
     def __init__(self):
         # 初始化一个TimedJSONWebSignatureSerializer对象，用于加密和解密
         self.serializer = Serializer(
-            secret_key = settings.SECRET_KEY,
-            expires_in = 24* 15 * 60 #秒
+            secret_key=settings.SECRET_KEY,
+            expires_in=24 * 15 * 60  # 秒
         )
 
     # 加密
@@ -33,4 +34,3 @@ class SecretOauth():
         except Exception as e:
             return None
         return result
-

@@ -8,9 +8,9 @@ from oauth.models import OAuthQQUser
 from mall.utils.secret import SecretOauth
 from django_redis import get_redis_connection
 from users.models import User
-import json,re
+import json, re
 from django.contrib.auth import login
-
+from carts.utils import merge_cart_cookie_to_redis
 
 
 # 1.接口1： 获取QQ扫码URL
@@ -19,7 +19,7 @@ class QQURLView(View):
         # next 表示从哪个页面进入到的登录页面
         # 将来登录成功后，就自动回到那个页面
         # 1.提取参数
-        next =  request.GET.get('next')
+        next = request.GET.get('next')
         # 2.校验参数
         # 3. 业务数据处理 —— 获取扫码url
         oauth = OAuthQQ(
@@ -32,20 +32,22 @@ class QQURLView(View):
         return JsonResponse({
             'code': 0,
             'errmsg': 'OK',
-            'login_url':login_url
+            'login_url': login_url
         })
 
 
 class QQUserView(View):
     # 接口2： 获取openid
-    def get(self,request):
+    def get(self, request):
         # 1.提取参数
         code = request.GET.get('code')
         # 2.校验参数
         if not code:
             # 判断 code 参数是否存在
-            return JsonResponse({'code': 400,
-                                      'errmsg': '缺少code参数'})
+            return JsonResponse({
+                'code': 400,
+                'errmsg': '缺少code参数'
+            })
         # 3.业务数据处理 —— 获取openid
         # 调用安装的 QQLoginTool 工具类
         # 3.1.创建工具对象
@@ -55,7 +57,6 @@ class QQUserView(View):
         try:
             # 3.2.携带 code 向 QQ服务器 请求 access_token
             access_token = oauth.get_access_token(code)
-
             # 3.3 携带 access_token 向 QQ服务器 请求 openid
             openid = oauth.get_open_id(access_token)
 
@@ -95,10 +96,9 @@ class QQUserView(View):
                 'code': 0,
                 'errmsg': 'ok'
             })
-
             # 将用户信息写入到 cookie 中，有效期14天
-            response.set_cookie('username', user.username, max_age=3600*24*14)
-
+            response.set_cookie('username', user.username, max_age=3600 * 24 * 14)
+            response = merge_cart_cookie_to_redis(request, response)
             # 返回响应
             return response
 
@@ -137,8 +137,8 @@ class QQUserView(View):
                 'errmsg': 'sms_code格式有误'
             })
         # 2.3 业务性校验 - 短信验证码
-        conn = get_redis_connection('verify_code') # 2号库
-        sms_code_from_redis = conn.get('sms_%s' %mobile) # 返回验证码或者None
+        conn = get_redis_connection('verify_code')  # 2号库
+        sms_code_from_redis = conn.get('sms_%s' % mobile)  # 返回验证码或者None
         if not sms_code_from_redis:
             return JsonResponse({
                 'code': 400,
@@ -153,7 +153,7 @@ class QQUserView(View):
         # 3.业务数据处理 —— 绑定QQ(把用户账号和openid绑定)
         # 3.1 获取openid（解密）
         auth = SecretOauth()
-        content_dict = auth.loads(access_token) # {'opendid': "asdgfbdsjh23"}
+        content_dict = auth.loads(access_token)  # {'opendid': "asdgfbdsjh23"}
         if content_dict is None:
             # 解密失败
             return JsonResponse({
@@ -176,7 +176,7 @@ class QQUserView(View):
             # 验证用户密码
             if not user.check_password(password):
                 return JsonResponse({
-                    'code':400,
+                    'code': 400,
                     'errmsg': '密码有误'
                 })
 
@@ -198,7 +198,6 @@ class QQUserView(View):
             'code': 0,
             'errmsg': 'ok'
         })
-        response.set_cookie('username', user.username, max_age=14*3600*24)
+        response.set_cookie('username', user.username, max_age=14 * 3600 * 24)
+        response = merge_cart_cookie_to_redis(request, response)
         return response
-
-

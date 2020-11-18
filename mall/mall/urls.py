@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path,include,register_converter
+from django.urls import path, include, register_converter
 from mall.utils import converters
 
 # 1. 总路由中添加路由转换器
@@ -30,5 +30,5 @@ urlpatterns = [
     path('', include('content.urls')),
     path('', include('goods.urls')),
     path('', include('carts.urls')),
-    
+
 ]

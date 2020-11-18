@@ -1,5 +1,3 @@
-
-
 class UsernameConverter:
     """
     自定义路由转换器去匹配用户名
@@ -12,6 +10,7 @@ class UsernameConverter:
 
     def to_url(self, value):
         return str(value)
+
 
 class MobileConverter:
     """

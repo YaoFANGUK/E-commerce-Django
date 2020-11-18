@@ -4,6 +4,7 @@ from .models import User
 from mall.utils.secret import SecretOauth
 from django.conf import settings
 
+
 def get_user_by_account(account):
     """判断account是否为手机号， 返回user对象"""
     try:
@@ -21,9 +22,11 @@ def get_user_by_account(account):
     else:
         return user
 
+
 # 继承自 ModelBackend，重写 authenticate函数
 class UsernameMobileAuthBackend(ModelBackend):
     """自定义用户认证后端"""
+
     def authenticate(self, request, username=None, password=None, **kwargs):
         """
         重写认证方法，实现用户名和mobile登录功能
@@ -42,6 +45,7 @@ class UsernameMobileAuthBackend(ModelBackend):
             # 如果user存在，密码正确，则返回user
             return user
 
+
 # 获取验证邮件完整的verify_url
 def generate_verify_email_url(request):
     """
@@ -59,5 +63,5 @@ def generate_verify_email_url(request):
     auth = SecretOauth()
     token = auth.dumps(data_dict)
     # 拼接完整的激活路由
-    verify_url =  settings.EMAIL_VERIFY_URL + token
+    verify_url = settings.EMAIL_VERIFY_URL + token
     return verify_url

@@ -21,7 +21,7 @@ def get_breadcrumb(category_id):
         ret_dict['cat3'] = category.name
         ret_dict['cat2'] = category.parent.name
         ret_dict['cat2'] = category.parent.parent.name
-    return  ret_dict
+    return ret_dict
 
 
 def get_goods_and_spec(sku_id):
@@ -46,7 +46,7 @@ def get_goods_and_spec(sku_id):
         sku_spec_options = SKUSpecification.objects.filter(sku=temp_sku).order_by('spec_id')
         sku_options = []
         for temp in sku_spec_options:
-            sku_options.append(temp.option_id) # [1,4,7]
+            sku_options.append(temp.option_id)  # [1,4,7]
             sku_options_mapping[tuple(sku_options)] = temp_sku.id  # {(1,4,7): 1}
 
     # specs当前页面需要渲染的所有规格
@@ -67,8 +67,4 @@ def get_goods_and_spec(sku_id):
         # 在每一个规格对象中动态添加一个属性spec_options来记录当前规格有哪些选项
         spec.spec_options = options
 
-    return  goods, sku, specs
-
-
-
-
+    return goods, sku, specs

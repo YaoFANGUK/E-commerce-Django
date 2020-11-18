@@ -121,4 +121,228 @@ class CartsView(View):
             'cart_skus': cart_skus
         })
 
+    # 修改购物车
+    def put(self, request):
+        # 1.提取参数
+        user = request.user  # 登陆用户 或 匿名用户
+        data = json.loads(request.body.decode())
+        sku_id = data.get('sku_id')
+        count = data.get('count')
+        selected = data.get('selected', True)
+        # 2.校验参数
+        if not all([sku_id, count]):
+            return JsonResponse({
+                'code': 400,
+                'errmsg': '缺少参数'
+            })
+        # 3. 业务数据处理
+        if user.is_authenticated:
+            # 登陆， 更新redis
+            conn = get_redis_connection('carts')
+            # (1)更新redis购物车的商品数量
+            conn.hset('carts_%s' % user.id, sku_id, count)
+            # (2)更新redis的选中状态
+            if selected:
+                conn.sadd('selected_%s' % user.id, sku_id)
+            else:
+                conn.srem('selected_%s' % user.id, sku_id)
+            sku = SKU.objects.get(pk=sku_id)
+            # 构建响应
+            response = JsonResponse({
+                'code': 0,
+                'errmsg': 'ok',
+                'cart_sku': {
+                    'id': sku.id,
+                    'count': count,
+                    'selected': selected,
+                    'name': sku.name,
+                    'default_image_url': sku.default_image.url,
+                    'price': sku.price,
+                    'amount': sku.price * count
+                }
+            })
+            return response
+        else:
+            # 未登录， 更新cookie
+            # (1) 读取cookie购物车字典数据
+            cart_str = request.COOKIES.get('carts')
+            if cart_str:
+                cart_dict = CookieSecret.loads(cart_str)
+            else:
+                cart_dict = {}
+            # (2)更新覆盖原有数据
+            if sku_id in cart_dict:
+                cart_dict[sku_id]['count'] = count
+                cart_dict[sku_id]['selected'] = selected
+            # (3)最新数据写入cookie
+            cart_str = CookieSecret.dumps(cart_dict)
+            sku = SKU.objects.get(pk=sku_id)
+            # 4. 构建响应
+            response = JsonResponse({
+                'code': 0,
+                'errmsg': 'ok',
+                'cart_sku': {
+                    'id': sku.id,
+                    'count': cart_dict[sku_id]['count'],
+                    'selected': cart_dict[sku_id]['selected'],
+                    'name': sku.name,
+                    'default_image_url': sku.default_image.url,
+                    'price': sku.price,
+                    'amount': sku.price * cart_dict[sku_id]['count']
+                }
+            })
+            response.set_cookie('carts', cart_str, max_age=24 * 3600 * 30)
+            return response
 
+    # 删除购物车
+    def delete(self, request):
+        # 1.提取参数
+        user = request.user
+        data = json.loads(request.body.decode())
+        sku_id = data.get('sku_id')
+        # 2.校验参数
+        if not sku_id:
+            return JsonResponse({
+                'code': 400,
+                'errmsg': '缺少参数'
+            })
+        # 3.业务数据处理
+        if user.is_authenticated:
+            # 登陆： 删除redis购物车商品
+            conn = get_redis_connection('carts')
+            # (1)删除商品和数量
+            conn.hdel('carts_%s' % user.id, sku_id)
+            # (2)删除选中状态
+            conn.srem('selected_%s' % user.id, sku_id)
+            # 4.构建响应
+            return JsonResponse({
+                'code': 0,
+                'errmsg': '购物车商品删除成功'
+            })
+        else:
+            # 未登录： 删除cookie购物车商品 —— 删除购物车中某一个商品
+            # (1)读取cookie购物车字典
+            cart_str = request.COOKIES.get('carts')
+            if cart_str:
+                cart_dict = CookieSecret.loads(cart_str)
+            else:
+                cart_dict = {}
+            # (2)删除购物车字典中的sku_id
+            if sku_id in cart_dict:
+                cart_dict.pop(sku_id)
+
+            # (3)把新的购物车字典数据加密写入cookie
+            cart_str = CookieSecret.dumps(cart_dict)
+            response = JsonResponse({
+                'code': 0,
+                'errmsg': '删除购物车成功'
+            })
+            response.set_cookie('carts', cart_str, max_age=24 * 3600 * 30)
+            return response
+
+
+class CartsSelectedAllView(View):
+    """
+    全选或取消全选接口
+    """
+
+    def put(self, request):
+        # 1.接收参数
+        user = request.user
+        data = json.loads(request.body.decode())
+        selected = data.get('selected')
+        # 2.校验参数
+        if not isinstance(selected, bool):
+            return JsonResponse({
+                'code': 400,
+                'errmsg': '参数有误'
+            })
+        # 3.业务数据处理 —— 登陆，把redis购物车设置全选或取消； 未登录把cookie购物车设置全选过取消
+        # 判断用户是否登陆
+        if user.is_authenticated:
+            conn = get_redis_connection('carts')
+            # (1)获取redis购物车商品数据
+            redis_carts = conn.hgetall('carts_%s' % user.id)
+            # (2)把全部sku_id加入集合或从集合中去除
+            sku_ids = redis_carts.keys()
+            if selected:
+                # 全部sku_id加入集合
+                conn.sadd('selected_%s' % user.id, *sku_ids)  # * For unpacking the containers a=[1,2,3] --> *a = 1 2 3
+            else:
+                # 全部从集合中去除
+                conn.srem('selected_%s' % user.id, *sku_ids)
+            response = JsonResponse({
+                'code': 0,
+                'errmsg': 'ok'
+            })
+            return response
+        else:
+            # (1)提取cookie购物车字典数据
+            cart_str = request.COOKIES.get('carts')
+            if cart_str:
+                cart_dict = CookieSecret.loads(cart_str)
+            else:
+                cart_dict = {}
+            # (2)设置全选或取消
+            sku_ids = cart_dict.keys()
+            for sku_id in sku_ids:
+                cart_dict[sku_id]['selected'] = selected
+            # (3)把新购物车字典写入cookie
+            cart_str = CookieSecret.dumps(cart_dict)
+            response = JsonResponse({
+                'code': 0,
+                'errmsg': 'ok'
+            })
+            response.set_cookie('carts', cart_str, max_age=30 * 24 * 3600)
+            return response
+
+
+class CartsSimpleView(View):
+
+    def get(self, request):
+        # 业务数据处理
+        user = request.user
+        # 先定义一个字典，用于记录后续redis购物车数据或cookie购物车数据
+        if user.is_authenticated:
+            # 读取redis
+            conn = get_redis_connection('carts')
+            redis_cart = conn.hgetall('cart_%s' % user.id)
+            redis_selected = conn.smembers('selected_%s' % user.id)
+            for sku_id in redis_selected:
+                cart_dict[int(sku_id)] = {
+                    'count': int(redis_cart[sku_id]),
+                    'selected': sku_id in redis_selected
+                }
+        else:
+            # 读取cookie
+            cart_str = request.COOKIES.get('carts')
+            if cart_str:
+                cart_dict = CookieSecret.loads(cart_str)
+            else:
+                cart_dict = {}
+            new_cart_dict = {}  # 存储已勾选的商品
+            sku_ids = cart_dict.keys()
+            for sku_id in sku_ids:
+                if cart_dict[sku_id]['selected']:
+                    new_cart_dict[sku_id] = {
+                        'count': cart_dict[sku_id]['count'],
+                        'selected': cart_dict[sku_id]['selected']
+                    }
+            cart_dict = new_cart_dict
+
+        # 根据cart_dict，去读取mysql商品详细信息，构建响应
+        sku_ids = cart_dict.keys()
+        cart_skus = []
+        for sku_id in sku_ids:
+            sku = SKU.objects.get(pk=sku_id)
+            cart_skus.append({
+                'id': sku.id,
+                'name': sku.name,
+                'count': cart_dict[sku_id]['count'],
+                'default_image_url': sku.default_image.url
+            })
+        return JsonResponse({
+            'code': 0,
+            'errmsg': 'ok',
+            'cart_skus': cart_skus
+        })

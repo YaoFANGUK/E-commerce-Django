@@ -14,6 +14,7 @@ from users.utils import generate_verify_email_url
 from mall.utils.secret import SecretOauth
 from goods.models import SKU
 from .models import Address
+from carts.utils import merge_cart_cookie_to_redis
 
 
 class UsernameCountView(View):
@@ -203,6 +204,7 @@ class LoginView(View):
         # 在响应对象中谁用户名信息
         # 将用户名写入到cookie，有效期14天
         response.set_cookie('username', user.username, max_age=3600 * 24 * 14)
+        response = merge_cart_cookie_to_redis(request, response)
         return response
 
 
@@ -610,7 +612,8 @@ class DefaultAddressView(View):
     """
     设置默认地址
     """
-    def put(self,request, address_id):
+
+    def put(self, request, address_id):
         """
         设置默认地址
         """
@@ -635,6 +638,7 @@ class UpdateTitleAddressView(View):
     """
     设置地址标题
     """
+
     def put(self, request, address_id):
         json_dict = json.loads(request.body.decode())
         title = json_dict.get('title')
@@ -660,6 +664,7 @@ class ChangePasswordView(View):
     """
     修改密码
     """
+
     def put(self, request):
         """
         实现修改密码逻辑
@@ -713,4 +718,3 @@ class ChangePasswordView(View):
         response.delete_cookie('username')
         # 响应修改密码结果：重定向到登陆界面
         return response
-

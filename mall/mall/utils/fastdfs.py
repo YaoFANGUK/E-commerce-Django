@@ -1,10 +1,12 @@
 from django.core.files.storage import Storage
 from django.conf import settings
 
+
 class FastDFSStorage(Storage):
     """
     自定义文件存储系统， 修改存储的方案
     """
+
     def __init__(self, fdfs_base_url=None):
         """
         :param fdfs_base_url: Storage的IP

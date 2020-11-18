@@ -1,5 +1,6 @@
 from django.db import models
 
+
 # 只是一个被用于继承的集类，不会被用于迁移建表
 class BaseModel(models.Model):
     """为模型类补充字段"""

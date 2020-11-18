@@ -8,6 +8,7 @@ from django.core.cache import cache
 
 class ProvinceAreasView(View):
     """省级地区"""
+
     def get(self, request):
         """
         提供省级地区数据:
@@ -56,6 +57,7 @@ class SubAreasView(View):
     """
     子级地区：市和区县
     """
+
     def get(self, request, pk):
         """
         提供市或区地区数据

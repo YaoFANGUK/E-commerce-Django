@@ -7,6 +7,7 @@ class IndexView(View):
     """
     首页广告
     """
+
     def get(self, request):
         """
         提供首页广告界面
@@ -23,7 +24,3 @@ class IndexView(View):
         }
 
         return render(request=request, template_name='index.html', context=context)
-
-
-
-

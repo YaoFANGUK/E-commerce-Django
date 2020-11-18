@@ -11,8 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
-import os,sys
-
+import os, sys
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,7 +36,7 @@ LOGIN_URL = '/login/'
 AUTH_USER_MODEL = 'users.User'
 
 # 将apps设置为导包路径
-sys.path.insert(0,os.path.join(BASE_DIR,'apps'))
+sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
 
 # Application definition
 
@@ -106,7 +105,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'mall.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
@@ -120,7 +118,6 @@ DATABASES = {
         'NAME': 'mall',
     }
 }
-
 
 CACHES = {
     # 默认存储信息: 存到 0 号库
@@ -166,7 +163,6 @@ CACHES = {
 }
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "session"
-
 
 LOGGING = {
     'version': 1,
@@ -216,7 +212,7 @@ CORS_ORIGIN_WHITELIST = (
     'http://www.linfaner.top:8080',
     'http://www.meiduo.site:8080',
 )
-CORS_ALLOW_CREDENTIALS = True # 允许携带cookie
+CORS_ALLOW_CREDENTIALS = True  # 允许携带cookie
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -236,7 +232,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # QQ登录参数
 # 我们申请的 客户端id
 QQ_CLIENT_ID = '101474184'
@@ -244,7 +239,6 @@ QQ_CLIENT_ID = '101474184'
 QQ_CLIENT_SECRET = 'c6ce949e04e12ecc909ae6a8b09b637c'
 # 我们申请时添加的: 登录成功后回调的路径
 QQ_REDIRECT_URI = 'http://www.meiduo.site:8080/oauth_callback.html'
-
 
 # 配置邮件服务器
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -261,7 +255,6 @@ EMAIL_FROM = 'my商城<mymall_admin@163.com>'
 # 邮箱验证链接
 EMAIL_VERIFY_URL = 'http://www.linfaner.top:8080/success_verify_email.html?token='
 
-
 # 指定自定义的Django文件存储类
 DEFAULT_FILE_STORAGE = 'mall.utils.fastdfs.FastDFSStorage'
 # FastDFS相关参数
@@ -272,7 +265,7 @@ HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
         'URL': 'http://search.linfaner.top:9200/',  # Elasticsearch服务器ip地址，端口号固定为9200
-        'INDEX_NAME': 'mall', # Elasticsearch建立索引库的名称
+        'INDEX_NAME': 'mall',  # Elasticsearch建立索引库的名称
     },
 }
 
@@ -280,7 +273,6 @@ HAYSTACK_CONNECTIONS = {
 HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
 # 可以添加如下代码, 用于决定每页显示数据条数:
 HAYSTACK_SEARCH_RESULTS_PER_PAGE = 5
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
@@ -294,7 +286,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/

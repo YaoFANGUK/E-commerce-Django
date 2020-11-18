@@ -13,6 +13,7 @@ class ListView(View):
     """
     商品列表页
     """
+
     def get(self, request, category_id):
         """
         提供商品列表页
@@ -87,6 +88,7 @@ class HotGoodsView(View):
     商品热销排行
     根据路径参数 category_id 查询出该类商品销量前二的商品
     """
+
     def get(self, request, category_id):
         """
         提供商品热销排行 JSON 数据
@@ -122,6 +124,7 @@ class MySearchView(SearchView):
     重写SearchView类, 搜索SKU商品
     该视图中默认已经提供了一个get方法响应GET请求，并且已经实现了根据参数检索数据
     """
+
     def create_response(self):
         # 1.获取ES搜索的结果
         context = self.get_context()
@@ -143,5 +146,3 @@ class MySearchView(SearchView):
                 'count': context['page'].paginator.count
             })
         return JsonResponse(data_list, safe=False)
-
-
