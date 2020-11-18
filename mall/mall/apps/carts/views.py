@@ -309,7 +309,6 @@ class CartsSimpleView(View):
             conn = get_redis_connection('carts')
             redis_cart = conn.hgetall('carts_%s' % user.id)
             redis_selected = conn.smembers('selected_%s' % user.id)
-            print(redis_cart, redis_selected)
             for sku_id in redis_selected:
                 cart_dict[int(sku_id)] = {
                     'count': int(redis_cart[sku_id]),
