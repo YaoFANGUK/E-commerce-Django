@@ -37,7 +37,8 @@ class OrderInfo(BaseModel):
     user = models.ForeignKey('users.User', on_delete=models.PROTECT, verbose_name="下单用户")
     address = models.ForeignKey('users.Address', on_delete=models.PROTECT, verbose_name='收货地址')
     total_count = models.IntegerField(default=1, verbose_name='商品总数')
-    total_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='运费')
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='商品总金额')
+    freight = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='运费')
     # pay_method 类型是一个整数， 我们以不同的整数表示不同的支付方式
     # choice=PAY_METHOD_CHOICES
     # pay_method = OrderInfo.PAY_METHODS_ENUM['CASH']

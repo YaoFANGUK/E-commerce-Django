@@ -9,7 +9,7 @@ import json
 from django.utils import timezone
 from django.db import transaction
 from goods.models import SKU
-
+from .models import OrderGoods,OrderInfo
 
 class OrderSettlementView(LoginRequiredJSONMixin, View):
 
@@ -119,8 +119,8 @@ class OrderCommitView(LoginRequiredJSONMixin, View):
                 order_id=order_id,
                 user=user,
                 address=address,
-                total_count=total_count,  # 初始化为0， 后续再统计
-                total_amount=total_amount,  # 初始化为0， 后续再统计
+                total_count=0,  # 初始化为0， 后续再统计
+                total_amount=0,  # 初始化为0， 后续再统计
                 freight=Decimal('10.00'),
                 pay_method=pay_method,
                 status=OrderInfo.ORDER_STATUS_ENUM['UNPAID']
