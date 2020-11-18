@@ -29,7 +29,7 @@ class OrderSettlementView(LoginRequiredJSONMixin, View):
                     'id': sku.id,
                     'name': sku.name,
                     'default_image_url': sku.default_image.url,
-                    'count': int(redis_cart[sku]),
+                    'count': int(redis_cart[sku_id]),
                     'price': sku.price
                 })
         address_queryset = Address.objects.filter(user=user)
@@ -38,7 +38,7 @@ class OrderSettlementView(LoginRequiredJSONMixin, View):
             addresses.append({
                 'id': address.id,
                 'province': address.province.name,
-                'city': addresses.district.name,
+                'city': address.district.name,
                 'place': address.place,
                 'mobile': address.mobile,
                 'receiver': address.receiver
