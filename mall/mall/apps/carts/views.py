@@ -303,11 +303,13 @@ class CartsSimpleView(View):
         # 业务数据处理
         user = request.user
         # 先定义一个字典，用于记录后续redis购物车数据或cookie购物车数据
+        cart_dict = {}
         if user.is_authenticated:
             # 读取redis
             conn = get_redis_connection('carts')
-            redis_cart = conn.hgetall('cart_%s' % user.id)
+            redis_cart = conn.hgetall('carts_%s' % user.id)
             redis_selected = conn.smembers('selected_%s' % user.id)
+            print(redis_cart, redis_selected)
             for sku_id in redis_selected:
                 cart_dict[int(sku_id)] = {
                     'count': int(redis_cart[sku_id]),
