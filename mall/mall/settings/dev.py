@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'areas',
     'carts',
     'orders',
+    'payment',
     'django_crontab',  # 实现定时任务
     'haystack',  # 全文检索
 ]
@@ -274,6 +275,12 @@ HAYSTACK_CONNECTIONS = {
 HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
 # 可以添加如下代码, 用于决定每页显示数据条数:
 HAYSTACK_SEARCH_RESULTS_PER_PAGE = 5
+
+# 对接支付宝
+ALIPAY_APPID = '2016110200786426'  #  应用ID
+ALIPAY_DEBUG = True # 调试模式，对接沙箱应用时为True,对接正式应用时为False
+ALIPAY_URL = 'https://openapi.alipaydev.com/gateway.do'  # 对接支付宝的网关，如果对接沙箱应用就是测试网关
+ALIPAY_RETURN_URL = "http://www.linfaner.top:8080/pay_success.html" # 支付成功后的回调地址
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
