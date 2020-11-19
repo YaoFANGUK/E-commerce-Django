@@ -82,7 +82,13 @@ http://www.linfaner.top:8080/search.html?q=华为
  
  <img src="https://s1.ax1x.com/2020/10/25/Bm2tfO.jpg" alt="" width="250" >
  
+ - 支付宝SDK
  
+ <img src="https://s3.ax1x.com/2020/11/18/DnUQRU.md.png" alt="" width="500">
+ 
+ <img src="https://s3.ax1x.com/2020/11/18/DnUlzF.png" alt="" width="500">
+ 
+
  #### Reference:
  
  [FastDFS搭建](https://support.huaweicloud.com/prtg-kunpengat/fastdfs_01_0001.html)
